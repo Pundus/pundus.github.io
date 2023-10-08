@@ -29,7 +29,7 @@ var Imported = Imported || {}; Imported["CTB_MaxBattlers"] = 1.00;
 
 Window_BattleStatus.prototype.maxCols = function() {
     const partySize = $gameParty.members().length;
-    return Math.max(Math.min(partySize, 6), 4);
+    return Math.max(Math.min(partySize, 6), 6);
 };
 
 Game_Party.prototype.maxBattleMembers = function() {
