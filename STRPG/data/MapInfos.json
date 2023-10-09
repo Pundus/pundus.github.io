@@ -1,8 +1,9 @@
 [
 null,
-{"id":1,"expanded":false,"name":"MAP001","order":1,"parentId":0,"scrollX":1312.5,"scrollY":744.75},
-{"id":2,"expanded":true,"name":"CharacterCreation","order":2,"parentId":0,"scrollX":875,"scrollY":496.5,"quick":false},
-{"id":3,"expanded":true,"name":"DEBUG 1","order":3,"parentId":2,"scrollX":875,"scrollY":496.5,"quick":false},
-{"id":4,"expanded":true,"name":"DEBUG 2","order":4,"parentId":2,"scrollX":875,"scrollY":496.5,"quick":false},
-{"id":5,"expanded":true,"name":"Kobayashi Maru Minigame","order":5,"parentId":2,"scrollX":875,"scrollY":896.5,"quick":false}
+{"id":1,"expanded":false,"name":"1_TestMap","order":1,"parentId":0,"scrollX":1312.5,"scrollY":744.75},
+{"id":2,"expanded":true,"name":"2_CharacterCreation","order":3,"parentId":0,"scrollX":1050,"scrollY":595.8,"quick":false},
+{"id":3,"expanded":true,"name":"3_Debug 1","order":2,"parentId":0,"scrollX":875,"scrollY":496.5,"quick":false},
+{"id":4,"expanded":true,"name":"4_Debug2","order":4,"parentId":0,"scrollX":1050,"scrollY":595.8,"quick":false},
+{"id":5,"expanded":true,"name":"5_KM Minigame","order":5,"parentId":4,"scrollX":963.2727272727274,"scrollY":598.3636363636364,"quick":false},
+{"id":6,"expanded":false,"name":"6_E1M1","order":6,"parentId":0,"scrollX":954,"scrollY":640,"quick":false}
 ]
