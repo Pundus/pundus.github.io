@@ -1,0 +1,18 @@
+ACTIVE		CSDF Damar 			[81] 					Gul Karinor			Episode 1		Keldon-Class
+ACTIVE		CSDF Lakarian 		[143]					Gul Maket			Episode 1		Galor-Class
+ACTIVE		CSDF Ithia	 		[108]					Gul Abara			Episode 1		Galor-Class
+ACTIVE		CSDF Lang			[54]					Glinn Rutan			Episode 1		Hideki-Class
+ACTIVE		CSDF Taspar			[204]					Glinn Hakor			Episode 1		Hideki-Class
+ACTIVE		CSDF Rejal			[191]					Glinn Malor			Episode 1		Hideki-Class
+DESTROYED	CMN Ranek			[C-GRML-F-CRD-155082]	Ronal Bona			Episode 1		Groumall-Class (Cardassian Military Freighter [CIV])
+ACTIVE		CMN Mosko			[C-GRML-F-CRD-124811]	Mil Tarayn			Episode 1		Groumall-Class (Cardassian Military Freighter [CIV])
+ACTIVE		Cales				[NAR-8222]				Mumbice				Episode 1		Batris-Class (Civilian Class 9 Bulk Freighter)
+ACTIVE		Dohmahr				[C-C7-F-BJR-101446]		Nil Solara			Episode 1		Civilian Class 7 Cargo Transport
+ACTIVE		North Star			[NAR-10214]				Serenata			Episode 1		Merchantman (
+ACTIVE		Harukawa Maru		[ECS-1946]				Ayleen				Episode 1		Class 3 Carrier
+ACTIVE		Kadokawa Maru		[ECS-1992]				N'Taow				Episode 1		Class 3 Carrier
+DESTROYED	USS Iliad			[NCC-97021]				Magnus Simpson		Episode 1		Odyssey-Class
+DESTROYED	USS Falcata			[NCC-61902]				Akteek-Ra			Episode 1		Saber-Class
+ACTIVE		USS Arendal			[NCC-64922]				V'Terak				Episode 1		Norway-Class
+ACTIVE		USS Magna Carta		[NCC-71215]				Bril Glott			Episode 1		Parliament-Class
+ACTIVE		USS Dalziel			[NCC-1855]				Tara Odhiambo		Episode 1		Miranda-Class 6 Supply Ship
