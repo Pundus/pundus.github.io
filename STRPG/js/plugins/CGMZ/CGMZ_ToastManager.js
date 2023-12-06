@@ -221,7 +221,7 @@
  * @param Max Window Count
  * @type number
  * @min 1
- * @max 3
+ * @max 10
  * @desc Determines max amount of toast windows shown at once
  * @default 1
  *

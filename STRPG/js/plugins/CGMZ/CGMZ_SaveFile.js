@@ -864,7 +864,14 @@ CGMZ_Window_SaveFileDisplay.prototype.drawLocationInfo = function(x, y, drawFade
 //-----------------------------------------------------------------------------
 CGMZ_Window_SaveFileDisplay.prototype.drawTimestamp = function(y) {
 	const date = new Date(this._info.timestamp);
-	this.drawText(date.toLocaleDateString(), 0, y, this.contents.width, 'right');
+	const day = date.getDate();
+	const month = date.getMonth();
+	const year = date.getFullYear();
+	const stardateRoot = date.getTime();
+	const stardate = (stardateRoot / 1000 / 21071).toFixed(2);
+	const customDate = $cgmzTemp.createDateText(day, month, year, 2, "/");
+	const datedStar = "Stardate " + stardate + " (" + customDate +")"
+	this.drawText(datedStar, 0, y, this.contents.width, 'right');
 };
 //-----------------------------------------------------------------------------
 // Draw playtime

@@ -457,29 +457,54 @@
         }
 
         createTextBitmap(text, fontSize, event) {
-            this._fontSize = fontSize;
-            this.resetFontSettings();
-            const bitmapSize = this.textSizeEx(text);
-            const p = param.padding || 0;
-            this.padding     = 0;
-            this.move(0, 0, bitmapSize.width + p * 2, bitmapSize.height + p * 2);
-            const labelHeight = this.height;
-            if (event.isNeedLabelTail()) {
-                this.height += param.tailHeight;
-            }
-            this.createContents();
-            const fillColor = param.backColor || 'rgba(0,0,0,0.5)';
-            const y = event.isLabelTailTop() ? param.tailHeight : 0;
-            this.contents.fillRect(0, y, this.width, labelHeight, fillColor);
-            if (event.isNeedLabelTail()) {
-                this.createLabelTail(labelHeight, fillColor, event);
-            }
-            this.drawTextEx(text, p, p + y, bitmapSize.width + p * 2);
-            const bitmap  = this.contents;
-            this.contents = null;
-            this.destroy();
-            return bitmap;
-        }
+    this._fontSize = fontSize;
+    this.resetFontSettings();
+    const p = param.padding || 0;
+
+// Define a custom spacing factor to adjust line spacing
+const lineSpacingFactor = 0.6; // Adjust this value to control spacing
+
+// Calculate text size for multiline text
+const lines = text.split('\n');
+// Use the line height specified in the Window_Base class and apply the spacing factor
+const lineHeight = this.lineHeight() * lineSpacingFactor;
+const textWidth = Math.max(...lines.map(line => this.textWidth(line)));
+const windowWidth = textWidth + p * 2;
+const windowHeight = lines.length * lineHeight + p * 2;
+
+
+
+    this.padding = 0;
+    this.move(0, 0, windowWidth, windowHeight);
+
+    const labelHeight = this.height;
+    if (event.isNeedLabelTail()) {
+        this.height += param.tailHeight;
+    }
+
+    this.createContents();
+    const fillColor = param.backColor || 'rgba(0,0,0,0.5)';
+    const y = event.isLabelTailTop() ? param.tailHeight : 0;
+    this.contents.fillRect(0, y, this.width, labelHeight, fillColor);
+    if (event.isNeedLabelTail()) {
+        this.createLabelTail(labelHeight, fillColor, event);
+    }
+
+    // Calculate Y position for multiline text with reduced line spacing
+    const yPositions = Array.from({ length: lines.length }, (_, i) => i * lineHeight);
+
+    // Draw each line centered within the window
+    lines.forEach((line, index) => {
+        const y = yPositions[index];
+        const x = Math.floor((windowWidth - this.textWidth(line)) / 2);
+        this.drawTextEx(line, x + p, p + y, textWidth);
+    });
+
+    const bitmap = this.contents;
+    this.contents = null;
+    this.destroy();
+    return bitmap;
+}
 
         createLabelTail(labelHeight, fillColor, event) {
             const ctx = this.contents.context;

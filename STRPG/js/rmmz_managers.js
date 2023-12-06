@@ -1734,11 +1734,11 @@ ColorManager.gaugeBackColor = function() {
 };
 
 ColorManager.hpGaugeColor1 = function() {
-    return this.textColor(20);
+    return this.textColor(28);
 };
 
 ColorManager.hpGaugeColor2 = function() {
-    return this.textColor(21);
+    return this.textColor(29);
 };
 
 ColorManager.mpGaugeColor1 = function() {
@@ -1762,23 +1762,23 @@ ColorManager.powerDownColor = function() {
 };
 
 ColorManager.ctGaugeColor1 = function() {
-    return this.textColor(26);
+    return this.textColor(2);
 };
 
 ColorManager.ctGaugeColor2 = function() {
-    return this.textColor(27);
+    return this.textColor(10);
 };
 
 ColorManager.tpGaugeColor1 = function() {
-    return this.textColor(28);
+    return this.textColor(20);
 };
 
 ColorManager.tpGaugeColor2 = function() {
-    return this.textColor(29);
+    return this.textColor(21);
 };
 
 ColorManager.tpCostColor = function() {
-    return this.textColor(29);
+    return this.textColor(21);
 };
 
 ColorManager.pendingColor = function() {

@@ -1,3 +1,9 @@
+/*:
+ * @plugindesc Custom_SkillCostDisplay
+ * @target MZ
+ *
+ */
+
 Window_SkillList.prototype.drawItem = function(index) {
     const skill = this.itemAt(index);
     if (skill) {
@@ -5,8 +11,29 @@ Window_SkillList.prototype.drawItem = function(index) {
         const rect = this.itemLineRect(index);
         this.changePaintOpacity(this.isEnabled(skill));
         this.drawItemName(skill, rect.x, rect.y, rect.width - costWidth);
-        this.drawSkillCost(skill, rect.x, rect.y, rect.width);
+        
+        // Check if the skill is on cooldown before drawing the cost
+        if (!this._actor.isSkillItemCooldown(skill)) {
+            this.drawSkillCost(skill, rect.x, rect.y, rect.width);
+        }
+        
+        this.drawSkillCooldown(skill, rect.x, rect.y, rect.width);
         this.changePaintOpacity(1);
+    }
+};
+
+ColorManager.CooldownColor = function() {
+    return this.textColor(7);
+};
+
+Window_SkillList.prototype.drawSkillCooldown = function(skill, x, y, width) {
+    const actor = this._actor;
+    if (actor.isSkillItemCooldown(skill)) {
+        const cooldownText = "Cooldown: " + actor.skillItemCooldown(skill) + " Turns";
+        const cooldownWidth = this.textWidth(cooldownText);
+        const cooldownX = x + width - cooldownWidth;
+        this.changeTextColor(ColorManager.CooldownColor());
+        this.drawText(cooldownText, cooldownX, y, cooldownWidth);
     }
 };
 
@@ -53,3 +80,4 @@ Window_SkillList.prototype.drawSkillCost = function(skill, x, y, width) {
         this.drawText(TextManager.mpA, mpAX, y, mpAWidth);
     }
 };
+

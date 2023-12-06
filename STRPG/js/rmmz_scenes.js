@@ -185,7 +185,7 @@ Scene_Base.prototype.isRightInputMode = function() {
 };
 
 Scene_Base.prototype.mainCommandWidth = function() {
-    return 240;
+    return 400;
 };
 
 Scene_Base.prototype.buttonAreaTop = function() {
@@ -934,9 +934,9 @@ Scene_Map.prototype.mapNameWindowRect = function() {
 };
 
 Scene_Map.prototype.createButtons = function() {
-    if (ConfigManager.touchUI) {
-        this.createMenuButton();
-    }
+    //if (ConfigManager.touchUI) {
+    //   this.createMenuButton();
+    //}
 };
 
 Scene_Map.prototype.createMenuButton = function() {
@@ -2060,11 +2060,11 @@ Scene_Status.prototype.statusParamsWidth = function() {
 };
 
 Scene_Status.prototype.statusParamsHeight = function() {
-    return this.calcWindowHeight(6, false);
+    return this.calcWindowHeight(10, false);
 };
 
 Scene_Status.prototype.profileHeight = function() {
-    return this.calcWindowHeight(2, false);
+    return this.calcWindowHeight(4, false);
 };
 
 Scene_Status.prototype.start = function() {

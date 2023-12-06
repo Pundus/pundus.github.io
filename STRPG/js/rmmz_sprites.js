@@ -2132,7 +2132,7 @@ Sprite_Gauge.prototype.createBitmap = function() {
 };
 
 Sprite_Gauge.prototype.bitmapWidth = function() {
-    return 128;
+    return SceneManager._scene instanceof Scene_Battle ? 128 : 240;
 };
 
 Sprite_Gauge.prototype.bitmapHeight = function() {

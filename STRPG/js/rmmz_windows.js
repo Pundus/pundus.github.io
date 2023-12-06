@@ -1771,22 +1771,22 @@ Window_StatusBase.prototype.drawActorName = function(actor, x, y, width) {
 };
 
 Window_StatusBase.prototype.drawActorClass = function(actor, x, y, width) {
-    width = width || 168;
+    width = width || 300;
     this.resetTextColor();
     this.drawText(actor.currentClass().name, x, y, width);
 };
 
 Window_StatusBase.prototype.drawActorNickname = function(actor, x, y, width) {
-    width = width || 270;
+    width = width || 300;
     this.resetTextColor();
     this.drawText(actor.nickname(), x, y, width);
 };
 
 Window_StatusBase.prototype.drawActorLevel = function(actor, x, y) {
-    this.changeTextColor(ColorManager.systemColor());
-    this.drawText(TextManager.levelA, x, y, 48);
-    this.resetTextColor();
-    this.drawText(actor.level, x + 84, y, 36, "right");
+//    this.changeTextColor(ColorManager.systemColor());
+//    this.drawText(TextManager.levelA, x, y, 48);
+//    this.resetTextColor();
+//    this.drawText(actor.level, x + 84, y, 36, "right");
 };
 
 Window_StatusBase.prototype.drawActorIcons = function(actor, x, y, width) {
@@ -1802,11 +1802,12 @@ Window_StatusBase.prototype.drawActorIcons = function(actor, x, y, width) {
 
 Window_StatusBase.prototype.drawActorSimpleStatus = function(actor, x, y) {
     const lineHeight = this.lineHeight();
-    const x2 = x + 180;
+    const x2 = x + 400;
     this.drawActorName(actor, x, y);
-    this.drawActorLevel(actor, x, y + lineHeight * 1);
+//    this.drawActorLevel(actor, x, y + lineHeight * 1);
+    this.drawActorNickname(actor, x, y+ lineHeight * 1);
     this.drawActorIcons(actor, x, y + lineHeight * 2);
-    this.drawActorClass(actor, x2, y);
+    this.drawActorClass(actor, x2, y, 300);
     this.placeBasicGauges(actor, x2, y + lineHeight);
 };
 
@@ -1989,14 +1990,14 @@ Window_MenuStatus.prototype.drawItemImage = function(index) {
     const width = ImageManager.faceWidth;
     const height = rect.height - 2;
     this.changePaintOpacity(actor.isBattleMember());
-    this.drawActorFace(actor, rect.x + 1, rect.y + 1, width, height);
+    this.drawActorFace(actor, rect.x + 50, rect.y + 1, width, height);
     this.changePaintOpacity(true);
 };
 
 Window_MenuStatus.prototype.drawItemStatus = function(index) {
     const actor = this.actor(index);
     const rect = this.itemRect(index);
-    const x = rect.x + 180;
+    const x = rect.x + 240;
     const y = rect.y + Math.floor(rect.height / 2 - this.lineHeight() * 1.5);
     this.drawActorSimpleStatus(actor, x, y);
 };
@@ -2354,7 +2355,7 @@ Window_SkillStatus.prototype.refresh = function() {
         const h = this.innerHeight;
         const y = h / 2 - this.lineHeight() * 1.5;
         this.drawActorFace(this._actor, x + 1, 0, 144, h);
-        this.drawActorSimpleStatus(this._actor, x + 180, y);
+        this.drawActorSimpleStatus(this._actor, x + 240, y);
     }
 };
 
@@ -2825,9 +2826,9 @@ Window_Status.prototype.refresh = function() {
 
 Window_Status.prototype.drawBlock1 = function() {
     const y = this.block1Y();
-    this.drawActorName(this._actor, 6, y, 168);
-    this.drawActorClass(this._actor, 192, y, 168);
-    this.drawActorNickname(this._actor, 432, y, 270);
+    this.drawActorName(this._actor, 100, y, 300);
+    this.drawActorClass(this._actor, 420, y, 300);
+    this.drawActorNickname(this._actor, 740, y, 300);
 };
 
 Window_Status.prototype.block1Y = function() {
@@ -2836,9 +2837,9 @@ Window_Status.prototype.block1Y = function() {
 
 Window_Status.prototype.drawBlock2 = function() {
     const y = this.block2Y();
-    this.drawActorFace(this._actor, 12, y);
-    this.drawBasicInfo(204, y);
-    this.drawExpInfo(456, y);
+    this.drawActorFace(this._actor, 100, y);
+    this.drawBasicInfo(420, y);
+//    this.drawExpInfo(456, y);
 };
 
 Window_Status.prototype.block2Y = function() {
@@ -2850,11 +2851,11 @@ Window_Status.prototype.block2Y = function() {
 
 Window_Status.prototype.drawBasicInfo = function(x, y) {
     const lineHeight = this.lineHeight();
-    this.drawActorLevel(this._actor, x, y + lineHeight * 0);
-    this.drawActorIcons(this._actor, x, y + lineHeight * 1);
-    this.placeBasicGauges(this._actor, x, y + lineHeight * 2);
+//    this.drawActorLevel(this._actor, x, y + lineHeight * 0);
+    this.drawActorIcons(this._actor, x, y + lineHeight * 0);
+    this.placeBasicGauges(this._actor, x, y + lineHeight * 1);
 };
-
+/*
 Window_Status.prototype.drawExpInfo = function(x, y) {
     const lineHeight = this.lineHeight();
     const expTotal = TextManager.expTotal.format(TextManager.exp);
@@ -2866,7 +2867,7 @@ Window_Status.prototype.drawExpInfo = function(x, y) {
     this.drawText(this.expTotalValue(), x, y + lineHeight * 1, 270, "right");
     this.drawText(this.expNextValue(), x, y + lineHeight * 3, 270, "right");
 };
-
+*/
 Window_Status.prototype.expTotalValue = function() {
     if (this._actor.isMaxLevel()) {
         return "-------";
@@ -2967,7 +2968,7 @@ Window_StatusEquip.prototype.drawItem = function(index) {
     const equips = this._actor.equips();
     const item = equips[index];
     const slotName = this.actorSlotName(this._actor, index);
-    const sw = 138;
+    const sw = 360;
     this.changeTextColor(ColorManager.systemColor());
     this.drawText(slotName, rect.x, rect.y, sw, rect.height);
     this.drawItemName(item, rect.x + sw, rect.y, rect.width - sw);

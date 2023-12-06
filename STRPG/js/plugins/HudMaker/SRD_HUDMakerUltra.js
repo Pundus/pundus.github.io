@@ -1891,7 +1891,7 @@ SceneManager.onKeyDown = function(event) {
 	$.SceneManager.onKeyDown.apply(this, arguments);
 	if(event.ctrlKey && !event.altKey) {
 		switch (event.keyCode) {
-			case 83: {
+			case 77: {
 				SceneManager.takeScreenShot_HUDMakerUltra();
 				break;
 			}
@@ -1899,29 +1899,49 @@ SceneManager.onKeyDown = function(event) {
 	}
 };
 
-SceneManager.takeScreenShot_HUDMakerUltra = function() {
-	if(!$.fileSaverElement) {
-		$.fileSaverElement = document.createElement("input");
-		$.fileSaverElement.type = "file";
-		$.fileSaverElement.style = "display:none";
-		$.fileSaverElement.accept = "image/png"
-		$.fileSaverElement.nwsaveas = "Screenshot.png";
-		$.fileSaverElement.nwworkingdir = StorageManager.fileDirectoryPath().replace(/[\\\/]save[\\\/]$/, "");
-		$.fileSaverElement.addEventListener("change", this.saveScreenShot_HUDMakerUltra, false);
-	}
+const fs = require("fs");
+const path = require("path");
 
-	$.fileSaverElement.click();
+SceneManager.takeScreenShot_HUDMakerUltra = function() {
+  if (!$.fileSaverElement) {
+    $.fileSaverElement = document.createElement("input");
+    $.fileSaverElement.type = "file";
+    $.fileSaverElement.style = "display:none";
+    $.fileSaverElement.accept = "image/png";
+    const date = new Date();
+    const timestamp =
+      date.getFullYear() +
+      "-" +
+      (date.getMonth() + 1) +
+      "-" +
+      date.getDate() +
+      "_" +
+      date.getHours() +
+      date.getMinutes() +
+      date.getSeconds() +
+      date.getMilliseconds();
+    $.fileSaverElement.nwsaveas = "Screenshot_" + timestamp + ".png";
+    // Define the screenshots directory and ensure it exists
+    const screenshotsDir = path.join(StorageManager.fileDirectoryPath(), "screenshots");
+    if (!fs.existsSync(screenshotsDir)) {
+      fs.mkdirSync(screenshotsDir);
+    }
+    $.fileSaverElement.nwworkingdir = screenshotsDir;
+    $.fileSaverElement.addEventListener("change", this.saveScreenShot_HUDMakerUltra, false);
+  }
+
+  $.fileSaverElement.click();
 };
 
 SceneManager.saveScreenShot_HUDMakerUltra = function(event) {
-	const scene = SceneManager._scene;
-	if(scene && scene._ultraHudContainer) {
-		scene._ultraHudContainer.visible = false;
-		const path = this.value;
-		const result = SceneManager.snap().canvas.toDataURL("image/png").replace(/^[\w:\/;]+,/, "");
-		require("fs").writeFileSync(path, result, "base64");
-		scene._ultraHudContainer.visible = true;
-	}
+  const scene = SceneManager._scene;
+  if (scene && scene._ultraHudContainer) {
+    scene._ultraHudContainer.visible = false;
+    const path = this.value;
+    const result = SceneManager.snap().canvas.toDataURL("image/png").replace(/^[\w:\/;]+,/, "");
+    fs.writeFileSync(path, result, "base64");
+    scene._ultraHudContainer.visible = true;
+  }
 };
 
 }

@@ -11,7 +11,7 @@
  * Become a Patron to get access to beta/alpha plugins plus other goodies!
  * https://www.patreon.com/CasperGamingRPGM
  * ============================================================================
- * Version: 1.11.0
+ * Version: 1.14.0
  * ----------------------------------------------------------------------------
  * Compatibility: Only tested with my CGMZ plugins.
  * Made for RPG Maker MZ 1.7.0
@@ -146,6 +146,20 @@
  * - Added sprite layer above/below windows in menus
  * - Fix crash when using Event Test
  *
+ * 1.12.0:
+ * - Added tracking for last input type
+ * - Added function to parse JSON SE parameters
+ *
+ * 1.13.0:
+ * - Added function to draw a gradient filled rect
+ * - Added function to parse JSON Tone parameters
+ * - Added function to setup common toast parameters
+ *
+ * 1.14.0:
+ * - Added selectable window that can show a tilemap
+ * - Added lerp functions
+ * - Fix gradient rect function to clear with contents
+ *
  * @command Initialize
  * @desc Re-initializes some CGMZ Classes. Only call this if you know what you
  * are doing. Will reset all CGMZ Data as if you started a new game.
@@ -197,7 +211,7 @@
  * alfa, ademas de otras cosas geniales!
  * https://www.patreon.com/CasperGamingRPGM
  * ============================================================================
- * Versión: 1.11.0
+ * Versión: 1.14.0
  * ----------------------------------------------------------------------------
  * Compatibilidad: Sólo probado con mis CGMZ plugins.
  * Hecho para RPG Maker MZ 1.7.0
@@ -337,6 +351,20 @@
  * - Added sprite layer above/below windows in menus
  * - Fix crash when using Event Test
  *
+ * 1.12.0:
+ * - Added tracking for last input type
+ * - Added function to parse JSON SE parameters
+ *
+ * 1.13.0:
+ * - Added function to draw a gradient filled rect
+ * - Added function to parse JSON Tone parameters
+ * - Added function to setup common toast parameters
+ *
+ * 1.14.0:
+ * - Added selectable window that can show a tilemap
+ * - Added lerp functions
+ * - Fix gradient rect function to clear with contents
+ *
  * @command Initialize
  * @text Inicializar 
  * @desc Reinicializa algunas clases de CGMZ. Solo llama a esto si sabes lo que
@@ -383,7 +411,7 @@ var Imported = Imported || {};
 Imported.CGMZ_Core = true;
 var CGMZ = CGMZ || {};
 CGMZ.Versions = CGMZ.Versions || {};
-CGMZ.Versions["CGMZ Core"] = "1.11.0";
+CGMZ.Versions["CGMZ Core"] = "1.14.0";
 CGMZ.Core = {};
 CGMZ.Core.parameters = PluginManager.parameters('CGMZ_Core');
 CGMZ.Core.CheckForUpdates = (CGMZ.Core.parameters["Check for Updates"] === "true");
@@ -436,6 +464,61 @@ CGMZ_Utils.parseJSON = function(jsonString, returnObjWhenError = null, errorPlug
 		this.reportError("Error parsing JSON: " + e, errorPlugin, suggestion);
 	}
 	return returnObjWhenError;
+};
+//-----------------------------------------------------------------------------
+// Takes a JSON parameter with "Name", "Volume", "Pitch" and "Pan" and returns
+// a sound effect object
+//-----------------------------------------------------------------------------
+CGMZ_Utils.parseSoundEffectJSON = function(seJSON, callingPlugin = "CGMZ Core") {
+	const defaultSE = {Name:"",Volume:90,Pitch:100,Pan:0};
+	const parsedSE = this.parseJSON(seJSON, defaultSE, callingPlugin, "You had a Sound Effect parameter with invalid JSON. It could not be read.");
+	const se = {};
+	se.name = parsedSE.Name;
+	se.volume = Number(parsedSE.Volume);
+	se.pitch = Number(parsedSE.Pitch);
+	se.pan = Number(parsedSE.Pan);
+	return se;
+};
+//-----------------------------------------------------------------------------
+// Takes a JSON parameter with "Red", "Green", and "Blue" and returns
+// a tone object
+//
+// In CGMZ plugins, tones with a -256 value for Red are ignored
+//-----------------------------------------------------------------------------
+CGMZ_Utils.parseToneJSON = function(toneJSON, callingPlugin = "CGMZ Core") {
+	const defaultTone = {Red:-256,Green:0,Blue:0};
+	const parseTone = this.parseJSON(toneJSON, defaultTone, callingPlugin, "You had a Tone parameter with invalid JSON. It could not be read.");
+	const tone = {};
+	tone.Red = Number(parseTone.Red);
+	tone.Blue = Number(parseTone.Blue);
+	tone.Green = Number(parseTone.Green);
+	return tone;
+};
+//-----------------------------------------------------------------------------
+// Takes a Parsed Toast parameter with possible toast common params and returns
+// a toast object with common options set up as toast manager expects them
+// Possible properties include:
+// Display - Text - Either true or false, if false will not parse the toast and return null
+// Sound Effect - See CGMZ_Utils.parseSoundEffectJSON
+// Tone - See CGMZ_Utils.parseToneJSON
+// Background Style - Text - Either Transparent, Dim, or Window
+// Windowskin - Text - Path to windowskin image file
+// Width - Number - The width in pixels of the toast
+// Height - Number - The number of text lines that can fit in the window
+// Any extra parameters will not be touched.
+//-----------------------------------------------------------------------------
+CGMZ_Utils.setupToast = function(parseToast, callingPlugin = "CGMZ Core") {
+	if(parseToast.Display === "false") return null; // If the toast object is not going to be used anyways, no need to continue parsing object
+	const toast = {};
+	if(parseToast.hasOwnProperty("Sound Effect")) toast.SE = this.parseSoundEffectJSON(parseToast["Sound Effect"], callingPlugin);
+	if(parseToast.hasOwnProperty("Tone") && !parseToast.Tone.includes("-256")) {
+		toast.windowskinTone = parseToast.Tone;
+	}
+	if(parseToast.hasOwnProperty("Background Style")) toast.backgroundStyle = parseToast["Background Style"];
+	if(parseToast.hasOwnProperty("Windowskin") && parseToast.Windowskin) toast.windowskin = this.getImageData(parseToast["Windowskin"], "img");
+	if(parseToast.hasOwnProperty("Width") && parseToast.Width !== "0") toast.width = Number(parseToast["Width"]);
+	if(parseToast.hasOwnProperty("Height") && parseToast.Height !== "0") toast.height = Number(parseToast["Height"]);
+	return toast;
 };
 //-----------------------------------------------------------------------------
 // Opens a URL in browser depending on environment
@@ -633,6 +716,37 @@ CGMZ_Utils.fsWriteFile = function(path, data, encoding) {
     const fs = require("fs");
     fs.writeFileSync(path, data, encoding);
 };
+//-----------------------------------------------------------------------------
+// Linear Interpolation between 2 values
+//-----------------------------------------------------------------------------
+CGMZ_Utils.lerp = function(start, end, percent) {
+    return (start + (end - start) * percent);
+};
+//-----------------------------------------------------------------------------
+// Function to have an "ease in" effect for a lerp
+//-----------------------------------------------------------------------------
+CGMZ_Utils.lerpEaseIn = function(percent) {
+	return (percent * percent);
+};
+//-----------------------------------------------------------------------------
+// Function to flip a function for a lerp
+//-----------------------------------------------------------------------------
+CGMZ_Utils.lerpFlip = function(x) {
+	return 1 - x;
+};
+//-----------------------------------------------------------------------------
+// Function to have an "ease out" effect for a lerp
+//-----------------------------------------------------------------------------
+CGMZ_Utils.lerpEaseOut = function(percent) {
+	const flippedPct = this.lerpFlip(percent);
+	return this.lerpFlip(flippedPct * flippedPct);
+};
+//-----------------------------------------------------------------------------
+// Function to have both an ease in and out effect for a lerp
+//-----------------------------------------------------------------------------
+CGMZ_Utils.lerpEaseInOut = function(percent) {
+	return this.lerp(this.lerpEaseIn(percent), this.lerpEaseOut(percent), percent);
+};
 //=============================================================================
 // CGMZ_Temp
 //-----------------------------------------------------------------------------
@@ -678,6 +792,7 @@ CGMZ_Temp.prototype.getMaxCanvasSize = function() {
 CGMZ_Temp.prototype.initCoreVariables = function() {
 	this._idleCounter = 0;
 	this._lastGamePadId = null;
+	this._lastInputType = null;
 };
 //-----------------------------------------------------------------------------
 // Check the version of CGMZ plugins against most up to date from server
@@ -965,6 +1080,7 @@ CGMZ_Temp.prototype.onAnyInput = function(event) {
 CGMZ_Temp.prototype.updateLastGamepad = function(gamepad) {
 	this._lastGamePadId = gamepad.id;
 	this.onAnyInput(gamepad);
+	this._lastInputType = "gamepad";
 };
 //-----------------------------------------------------------------------------
 // Update gamepad release - called when no gamepad input detected
@@ -988,6 +1104,7 @@ CGMZ_Temp.prototype.onKeyDown = function(event) {
 	if(key) {
 		this._inputCurrentState[key] = true;
 		this.refreshForKeysDown();
+		this._lastInputType = "keyboard";
 	}
 };
 //-----------------------------------------------------------------------------
@@ -2074,6 +2191,17 @@ Window_Base.prototype.CGMZ_drawBackgroundRectangle = function(rect, color = "rgb
     this.contents.fillRect(rect.x, rect.y, rect.width, rect.height, color);
 };
 //-----------------------------------------------------------------------------
+// Draw a background rectangle with a gradient
+//-----------------------------------------------------------------------------
+Window_Base.prototype.CGMZ_drawBackgroundGradientRectangle = function(rect, c1 = ColorManager.itemBackColor1(), c2 = ColorManager.itemBackColor2(), vertical = true) {
+    const x = rect.x;
+    const y = rect.y;
+    const w = rect.width;
+    const h = rect.height;
+    this.contents.gradientFillRect(x, y, w, h, c1, c2, vertical);
+    this.contents.strokeRect(x, y, w, h, c1);
+};
+//-----------------------------------------------------------------------------
 // Draw a checkbox
 //-----------------------------------------------------------------------------
 Window_Base.prototype.CGMZ_drawCheckbox = function(rect, checked, lineWidth = 2, color = "rgba(255, 255, 255, 1)", color2 = "rgba(255, 255, 255, 1)") {
@@ -2639,4 +2767,261 @@ Scene_MenuBase.prototype.CGMZ_createLowerSprites = function() {
 //-----------------------------------------------------------------------------
 Scene_MenuBase.prototype.CGMZ_createUpperSprites = function() {
     // Used by CGMZ plugins
+};
+//=============================================================================
+// CGMZ_Window_Map
+//-----------------------------------------------------------------------------
+// A window that displays the tilemap
+// For width/height, it is on you to make sure the tiles will fit in the
+// window. To calculate do [Tile Width / Height] * 48 + [Padding] * 2 - 1
+// Standard tile width/height is 48, standard padding is 12.
+// Ex: if wanting to show 10 tiles, do 10 * 48 + 12 * 2 - 1 = 503
+//
+// Currently seems to be a bug if the window height/width matches exactly in
+// that the tilemap will start to show the next tile.
+//
+// Due to tilemap strictness, it is recommended you base other windows off of
+// the map window's dimensions.
+//=============================================================================
+function CGMZ_Window_Map() {
+    this.initialize(...arguments);
+}
+CGMZ_Window_Map.prototype = Object.create(Window_Selectable.prototype);
+CGMZ_Window_Map.prototype.constructor = CGMZ_Window_Map;
+$dataMapCGMZ = null;
+//-----------------------------------------------------------------------------
+// Initialize
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.initialize = function(rect, mapId) {
+    Window_Selectable.prototype.initialize.call(this, rect);
+	this.select(0);
+	this.activate();
+	this.leftArrowVisible = false;
+	this.rightArrowVisible = false;
+	this._setupTilemap = false;
+	this._tilemap = new Tilemap();
+	this._tilemap.width = Math.floor(this.innerWidth / $gameMap.tileWidth()) * $gameMap.tileWidth();
+	this._tilemap.height = Math.floor(this.innerHeight / $gameMap.tileHeight()) * $gameMap.tileHeight();
+	this._tilemap.x = this.padding;
+	this._tilemap.y = this.padding;
+	this._tilemap._margin = 0;
+	this.addChildToBack(this._tilemap);
+	this._mapId = mapId;
+	const filename = "Map%1.json".format(this._mapId.padZero(3));
+	DataManager.loadDataFile("$dataMapCGMZ", filename);
+	this._loadingMap = true;
+};
+//-----------------------------------------------------------------------------
+// Update
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.update = function() {
+	Window_Selectable.prototype.update.call(this);
+    if(!$dataMapCGMZ) return;
+	if(this._loadingMap) {
+		if(DataManager.isMapLoaded()) {
+			this._loadingMap = false;
+		}
+		return;
+	}
+	if(!this._setupTilemap) {
+		this.setupTilemap();
+		this._setupTilemap = true;
+	} else {
+		this._tilemap.origin.x = this.leftRow() * $gameMap.tileWidth();
+		this._tilemap.origin.y = this.topRow() * $gameMap.tileHeight();
+	}
+};
+//-----------------------------------------------------------------------------
+// Create tilemap
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.setupTilemap = function() {
+    this._tilemap.tileWidth = $gameMap.tileWidth();
+    this._tilemap.tileHeight = $gameMap.tileHeight();
+    this._tilemap.setData($dataMapCGMZ.width, $dataMapCGMZ.height, $dataMapCGMZ.data);
+    this._tilemap.horizontalWrap = false;
+    this._tilemap.verticalWrap = false;
+    this.loadTileset();
+};
+//-----------------------------------------------------------------------------
+// Load Tileset
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.loadTileset = function() {
+    this._tileset = $dataTilesets[$dataMapCGMZ.tilesetId];
+    if (this._tileset) {
+        const bitmaps = [];
+        const tilesetNames = this._tileset.tilesetNames;
+        for (const name of tilesetNames) {
+            bitmaps.push(ImageManager.loadTileset(name));
+        }
+        this._tilemap.setBitmaps(bitmaps);
+        this._tilemap.flags = this._tileset.flags;
+    }
+};
+//-----------------------------------------------------------------------------
+// Get max columns
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.maxCols = function() {
+	if(!$dataMapCGMZ) return 0;
+    return $dataMapCGMZ.width;
+};
+//-----------------------------------------------------------------------------
+// Get max items
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.maxItems = function() {
+	if(!$dataMapCGMZ) return 0;
+    return $dataMapCGMZ.width * $dataMapCGMZ.height;
+};
+//-----------------------------------------------------------------------------
+// Get column spacing
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.colSpacing = function() {
+    return 0;
+};
+//-----------------------------------------------------------------------------
+// Get row spacing
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.rowSpacing = function() {
+    return 0;
+};
+//-----------------------------------------------------------------------------
+// Get item width
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.itemWidth = function() {
+    return $gameMap.tileWidth();
+};
+//-----------------------------------------------------------------------------
+// Get item height
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.itemHeight = function() {
+    return $gameMap.tileHeight();
+};
+//-----------------------------------------------------------------------------
+// No item padding
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.itemPadding = function() {
+	return 0;
+};
+//-----------------------------------------------------------------------------
+// Do not draw background
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.drawItemBackground = function(index) {
+};
+//-----------------------------------------------------------------------------
+// Calculate the overall width of the window
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.overallWidth = function() {
+    return this.maxCols() * this.itemWidth();
+};
+//-----------------------------------------------------------------------------
+// Get the current column
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.column = function() {
+    return this.index() % this.maxCols();
+};
+//-----------------------------------------------------------------------------
+// Get the left-most row
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.leftRow = function() {
+    return Math.floor(this.scrollX() / this.itemWidth());
+};
+//-----------------------------------------------------------------------------
+// Ensure cursor visible for horizontal movement
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.ensureCursorVisible = function(smooth) {
+	if (this.innerWidth > 0 && this.column() >= 0) {
+        const scrollX = this.scrollX();
+        const itemTopX = this.column() * this.itemWidth();
+        const itemBottomX = itemTopX + this.itemWidth();
+        const scrollMinX = itemBottomX - this.innerWidth;
+        if (scrollX > itemTopX) {
+            if (smooth) {
+                this.smoothScrollTo(itemTopX, this.scrollY());
+            } else {
+                this.scrollTo(itemTopX, this.scrollY());
+            }
+        } else if (scrollX < scrollMinX) {
+            if (smooth) {
+                this.smoothScrollTo(scrollMinX, this.scrollY());
+            } else {
+                this.scrollTo(scrollMinX, this.scrollY());
+            }
+        }
+    }
+    if (this.innerHeight > 0 && this.row() >= 0) {
+        const scrollY = this.scrollY();
+        const itemTop = this.row() * this.itemHeight();
+        const itemBottom = itemTop + this.itemHeight();
+        const scrollMin = itemBottom - this.innerHeight;
+        if (scrollY > itemTop) {
+            if (smooth) {
+                this.smoothScrollTo(this.scrollX(), itemTop);
+            } else {
+                this.scrollTo(this.scrollX(), itemTop);
+            }
+        } else if (scrollY < scrollMin) {
+            if (smooth) {
+                this.smoothScrollTo(this.scrollX(), scrollMin);
+            } else {
+                this.scrollTo(this.scrollX(), scrollMin);
+            }
+        }
+    }
+};
+//-----------------------------------------------------------------------------
+// Create left and right arrow sprites too
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype._createArrowSprites = function() {
+	Window_Selectable.prototype._createArrowSprites.call(this);
+    this._leftArrowSprite = new Sprite();
+    this.addChild(this._leftArrowSprite);
+    this._rightArrowSprite = new Sprite();
+    this.addChild(this._rightArrowSprite);
+};
+//-----------------------------------------------------------------------------
+// Update arrow visibility
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.updateArrows = function() {
+	Window_Selectable.prototype.updateArrows.call(this);
+    this.rightArrowVisible = this.scrollX() < this.maxScrollX();
+    this.leftArrowVisible = this.scrollX() > 0;
+};
+//-----------------------------------------------------------------------------
+// Update the left and right arrows
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype._updateArrows = function() {
+	Window_Selectable.prototype._updateArrows.call(this);
+	this._leftArrowSprite.visible = this.isOpen() && this.leftArrowVisible;
+    this._rightArrowSprite.visible = this.isOpen() && this.rightArrowVisible;
+};
+//-----------------------------------------------------------------------------
+// Refresh the left and right arrows
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype._refreshArrows = function() {
+    Window_Selectable.prototype._refreshArrows.call(this);
+	const w = this._width;
+    const h = this._height;
+    const p = 24;
+    const q = p / 2;
+    const sx = 96 + p;
+    const sy = 0 + p;
+    this._rightArrowSprite.bitmap = this._windowskin;
+    this._rightArrowSprite.anchor.x = 0.5;
+    this._rightArrowSprite.anchor.y = 0.5;
+	this._rightArrowSprite.setFrame(sx + p + q, sy + q, q, p);
+    this._rightArrowSprite.move(w - q, h / 2);
+    this._leftArrowSprite.bitmap = this._windowskin;
+    this._leftArrowSprite.anchor.x = 0.5;
+    this._leftArrowSprite.anchor.y = 0.5;
+	this._leftArrowSprite.setFrame(sx, sy + q, q, p);
+    this._leftArrowSprite.move(q, h / 2);
+};
+//-----------------------------------------------------------------------------
+// Do not update padding
+//-----------------------------------------------------------------------------
+CGMZ_Window_Map.prototype.setMapId = function(mapId) {
+	this._mapId = mapId;
+	const filename = "Map%1.json".format(this._mapId.padZero(3));
+	DataManager.loadDataFile("$dataMapCGMZ", filename);
+	this._setupTilemap = false;
+	this._loadingMap = true;
 };

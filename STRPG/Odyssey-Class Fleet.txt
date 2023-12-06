@@ -1,0 +1,52 @@
+Starship Name		Starship Registry		Captain				Status
+USS Hikaru Sulu		[NCC-92420]				N/A					Active [Sol III Fleet Flagship]
+USS Odyssey			[NCC-97000]				N/A					Museum Ship [San Francisco Ship Yards]
+USS Verity			[NCC-97001]				N/A					Museum Ship [Utopia Planitia Memorial Station]
+USS Enterprise		[NCC-1701-F]			N/A					Museum Ship [Athan Prime Fleet Museum]
+USS Endeavour 		[NCC-97003]				TBA					Active
+USS Sojourner 		[NCC-97004]				TBA					Active
+USS Yorktown 		[NCC-97005]				TBA					Active
+USS Lexington 		[NCC-97006]				TBA					Active
+USS Cayuga	 		[NCC-97007]				TBA					Active
+USS Excalibur 		[NCC-97008]				TBA					Active
+USS Exeter	 		[NCC-97009]				TBA					Active
+USS Republic 		[NCC-97010]				TBA					Active
+USS Beowulf 		[NCC-97011]				TBA					Active
+USS Ulysses 		[NCC-97012]				TBA					Active
+USS Shahnameh 		[NCC-97013]				TBA					Active
+USS Potemkin 		[NCC-97014]				TBA					Active
+USS New Jersey 		[NCC-97015]				TBA					Active
+USS Dongmyeong 		[NCC-97016]				TBA					Active
+USS Constellation	[NCC-97017]				TBA					Active
+USS Adarna	 		[NCC-97018]				TBA					Active
+USS Aeneid 			[NCC-97019]				TBA					Active
+USS Hood	 		[NCC-97020]				TBA					Active
+USS Iliad	 		[NCC-97021]				Magnus Simpson		Destroyed over Goralis II
+USS Sun Wukong 		[NCC-97022]				TBA					Active
+USS Kalevala 		[NCC-97023]				TBA					Active
+USS Mahābhārata		[NCC-97024]				TBA					Active
+USS Atra-Hasis 		[NCC-97025]				TBA					Active
+USS Theogony 		[NCC-97026]				TBA					Active
+USS Gesar 			[NCC-97027]				TBA					Active
+USS Enūma Eliš 		[NCC-97028]				TBA					Active
+USS Emden	 		[NCC-97029]				TBA					Active
+USS Korolev 		[NCC-97030]				TBA					Active
+USS Eagle	 		[NCC-97047]				TBA					Active
+USS Falcon	 		[NCC-97048]				TBA					Active
+USS Yutu	 		[NCC-97049]				TBA					Active
+USS Vikram	 		[NCC-97050]				TBA					Active
+
+
+
+
+
+
+
+
+
+
+
+TOS Connies
+like Lexington, Yorktown, etc
+can also do names of epics and epic characters
+Ulysses etc
