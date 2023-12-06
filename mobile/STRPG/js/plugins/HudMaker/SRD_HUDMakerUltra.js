@@ -1903,6 +1903,7 @@ const fs = require("fs");
 const path = require("path");
 
 SceneManager.takeScreenShot_HUDMakerUltra = function() {
+  if (Utils.isNwjs()) {
   if (!$.fileSaverElement) {
     $.fileSaverElement = document.createElement("input");
     $.fileSaverElement.type = "file";
@@ -1928,6 +1929,8 @@ SceneManager.takeScreenShot_HUDMakerUltra = function() {
     }
     $.fileSaverElement.nwworkingdir = screenshotsDir;
     $.fileSaverElement.addEventListener("change", this.saveScreenShot_HUDMakerUltra, false);
+	}
+	}  else {
   }
 
   $.fileSaverElement.click();
